@@ -47,6 +47,10 @@
     .mini{background:white;border:1px solid var(--line);border-radius:18px;padding:16px}
     .mini .k{font-size:12px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.06em}
     .mini .v{font-size:23px;font-weight:950;margin-top:4px;letter-spacing:-.03em}
+    .impact-list{display:grid;gap:10px}
+    .impact-item{background:white;border:1px solid var(--line);border-radius:18px;padding:16px}
+    .impact-title{font-size:13px;font-weight:950;color:var(--accent2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+    .impact-text{font-size:14px;color:var(--muted);margin:0}
     .layout{display:grid;grid-template-columns:400px 1fr;gap:18px;align-items:start}
     .panel{padding:20px}
     .panel h2{margin:0 0 16px;font-size:22px;letter-spacing:-.02em}
@@ -98,15 +102,27 @@
         </div>
       </div>
       <aside class="hero-side card">
-        <div class="mini-grid">
-          <div class="mini"><div class="k">Ejari online</div><div class="v">177.75</div></div>
-          <div class="mini"><div class="k">DEWA activation</div><div class="v">155</div></div>
-          <div class="mini"><div class="k">DEWA deposit</div><div class="v">2k / 4k</div></div>
-          <div class="mini"><div class="k">Agency fee</div><div class="v">5% / 10%</div></div>
+        <h2 style="margin:0;font-size:22px;letter-spacing:-.02em">Что влияет на расчёт</h2>
+        <div class="impact-list">
+          <div class="impact-item">
+            <div class="impact-title">Площадь, sq.ft</div>
+            <p class="impact-text">Влияет на оценку DEWA electricity & water и на chiller, если в здании есть отдельный district cooling.</p>
+          </div>
+          <div class="impact-item">
+            <div class="impact-title">Тип жилья</div>
+            <p class="impact-text">Flat / villa влияет на DEWA deposit: AED 2,000 для квартиры и AED 4,000 для villa. Также villa даёт более высокую оценку DEWA consumption.</p>
+          </div>
+          <div class="impact-item">
+            <div class="impact-title">Количество чеков</div>
+            <p class="impact-text">Влияет на первый платёж: первый cheque = годовая аренда ÷ количество чеков. На общую аренду за год не влияет.</p>
+          </div>
+          <div class="impact-item">
+            <div class="impact-title">Furnished / unfurnished</div>
+            <p class="impact-text">Влияет на security deposit landlord: 5% для unfurnished или 10% для furnished.</p>
+          </div>
         </div>
         <div class="note">
-          Ejari и DEWA activation не вводятся вручную: они выбираются из фиксированных вариантов. 
-          DEWA consumption и chiller — это оценка для планирования бюджета, потому что фактический счёт зависит от здания, сезона и потребления.
+          Фиксированные платежи вроде Ejari и DEWA activation считаются автоматически ниже — их не нужно вводить вручную.
         </div>
       </aside>
     </section>
@@ -123,6 +139,7 @@
           <div class="field">
             <label for="sqft">Площадь, sq.ft</label>
             <input id="sqft" type="number" min="0" step="1" value="750" />
+            <div class="hint">Влияет на оценку DEWA consumption и chiller, если выбран отдельный chiller.</div>
           </div>
         </div>
 
@@ -143,6 +160,7 @@
               <option value="flat" selected>Apartment / Flat</option>
               <option value="villa">Villa</option>
             </select>
+            <div class="hint">Влияет на DEWA deposit и оценку DEWA electricity & water.</div>
           </div>
         </div>
 
