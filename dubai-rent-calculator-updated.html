@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Калькулятор аренды в Дубае</title>
+  <style>
+    :root{
+      --bg:#f7f3ea;
+      --panel:#fffaf0;
+      --ink:#1b1b1b;
+      --muted:#69645b;
+      --line:#e4d9c8;
+      --accent:#0f766e;
+      --accent2:#134e4a;
+      --accent-soft:#dff5ef;
+      --warn-bg:#fff7ed;
+      --warn-line:#fed7aa;
+      --warn-text:#7c2d12;
+      --shadow:0 18px 50px rgba(38,31,19,.10);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(15,118,110,.18), transparent 32rem),
+        radial-gradient(circle at bottom right, rgba(180,83,9,.12), transparent 28rem),
+        var(--bg);
+      line-height:1.45;
+    }
+    .wrap{max-width:1180px;margin:0 auto;padding:28px 18px 60px}
+    .hero{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:stretch;margin-bottom:18px}
+    .card{background:rgba(255,250,240,.9);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(10px)}
+    .hero-main{padding:30px}
+    .eyebrow{display:inline-flex;gap:8px;align-items:center;padding:7px 12px;border-radius:999px;background:var(--accent-soft);color:var(--accent2);font-weight:850;font-size:13px;margin-bottom:18px}
+    h1{font-size:clamp(30px,5vw,54px);line-height:1.02;margin:0 0 14px;letter-spacing:-.045em}
+    .lead{font-size:18px;color:var(--muted);max-width:790px;margin:0 0 20px}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+    button{appearance:none;border:0;cursor:pointer;border-radius:14px;padding:12px 16px;background:var(--accent);color:white;font-weight:850;box-shadow:0 8px 20px rgba(15,118,110,.22);transition:.15s transform,.15s background;display:inline-flex;align-items:center;gap:8px}
+    button:hover{transform:translateY(-1px);background:var(--accent2)}
+    button.secondary{background:white;color:var(--accent2);border:1px solid var(--line);box-shadow:none}
+    .hero-side{padding:20px;display:flex;flex-direction:column;gap:14px}
+    .mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .mini{background:white;border:1px solid var(--line);border-radius:18px;padding:16px}
+    .mini .k{font-size:12px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.06em}
+    .mini .v{font-size:23px;font-weight:950;margin-top:4px;letter-spacing:-.03em}
+    .layout{display:grid;grid-template-columns:400px 1fr;gap:18px;align-items:start}
+    .panel{padding:20px}
+    .panel h2{margin:0 0 16px;font-size:22px;letter-spacing:-.02em}
+    .section-title{margin:22px 0 10px;font-size:13px;color:var(--muted);font-weight:950;text-transform:uppercase;letter-spacing:.08em}
+    label{display:block;font-size:13px;font-weight:850;margin:0 0 7px;color:#29251f}
+    input,select{width:100%;border:1px solid var(--line);border-radius:14px;background:white;color:var(--ink);padding:12px 12px;font-size:15px;outline:none}
+    input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(15,118,110,.12)}
+    .field{margin-bottom:12px}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .hint{font-size:12px;color:var(--muted);margin-top:5px}
+    .result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+    .metric{background:white;border:1px solid var(--line);border-radius:18px;padding:16px;min-height:112px}
+    .metric .name{font-size:12px;color:var(--muted);font-weight:850;text-transform:uppercase;letter-spacing:.06em}
+    .metric .num{font-size:clamp(22px,3vw,32px);font-weight:950;margin:8px 0 2px;letter-spacing:-.03em}
+    .metric .sub{font-size:12px;color:var(--muted)}
+    .metric.main{background:linear-gradient(135deg,var(--accent),#0b4f49);color:white;border:0}
+    .metric.main .name,.metric.main .sub{color:rgba(255,255,255,.78)}
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+    .table-card{overflow:hidden}
+    table{width:100%;border-collapse:collapse;background:white}
+    th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);font-size:14px;vertical-align:top}
+    th{background:#f3eadb;color:#4e463b;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+    td.amount{text-align:right;font-variant-numeric:tabular-nums;font-weight:850;white-space:nowrap}
+    tr.total td{background:#f8fafc;font-weight:950}
+    tr:last-child td{border-bottom:0}
+    .note{padding:14px 16px;border-radius:18px;background:var(--warn-bg);border:1px solid var(--warn-line);color:var(--warn-text);font-size:14px;margin-top:14px}
+    .source{font-size:12px;color:var(--muted);margin-top:14px;display:grid;gap:4px}
+    .footer{font-size:12px;color:var(--muted);margin-top:20px;text-align:center}
+    .badge{display:inline-flex;align-items:center;border-radius:999px;background:var(--accent-soft);color:var(--accent2);padding:5px 9px;font-size:12px;font-weight:850}
+    @media (max-width:1000px){.hero,.layout,.split{grid-template-columns:1fr}.result-grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:560px){.wrap{padding:18px 12px 42px}.hero-main,.panel{padding:18px}.two,.mini-grid,.result-grid{grid-template-columns:1fr}th,td{padding:10px 10px}}
+    @media print{body{background:white}.hero-actions,.inputs{display:none}.wrap{max-width:none;padding:0}.card{box-shadow:none;break-inside:avoid}.layout{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="hero-main card">
+        <div class="eyebrow">Dubai Rent Calculator</div>
+        <h1>Калькулятор аренды на год в Дубае</h1>
+        <p class="lead">
+          Универсальный калькулятор без вариантов квартир. Считает первый платёж, возвратные депозиты,
+          комиссии, Ejari, DEWA, интернет, chiller и подробные месячные расходы.
+        </p>
+        <div class="hero-actions">
+          <button id="printBtn">Печать / PDF</button>
+          <button class="secondary" id="csvBtn">Скачать расчёт CSV</button>
+          <button class="secondary" id="resetBtn">Сбросить</button>
+        </div>
+      </div>
+      <aside class="hero-side card">
+        <div class="mini-grid">
+          <div class="mini"><div class="k">Ejari online</div><div class="v">177.75</div></div>
+          <div class="mini"><div class="k">DEWA activation</div><div class="v">155</div></div>
+          <div class="mini"><div class="k">DEWA deposit</div><div class="v">2k / 4k</div></div>
+          <div class="mini"><div class="k">Agency fee</div><div class="v">5% / 10%</div></div>
+        </div>
+        <div class="note">
+          Ejari и DEWA activation не вводятся вручную: они выбираются из фиксированных вариантов. 
+          DEWA consumption и chiller — это оценка для планирования бюджета, потому что фактический счёт зависит от здания, сезона и потребления.
+        </div>
+      </aside>
+    </section>
+
+    <main class="layout">
+      <aside class="panel card inputs">
+        <h2>Параметры аренды</h2>
+
+        <div class="two">
+          <div class="field">
+            <label for="rent">Годовая аренда, AED</label>
+            <input id="rent" type="number" min="0" step="500" value="90000" />
+          </div>
+          <div class="field">
+            <label for="sqft">Площадь, sq.ft</label>
+            <input id="sqft" type="number" min="0" step="1" value="750" />
+          </div>
+        </div>
+
+        <div class="two">
+          <div class="field">
+            <label for="cheques">Количество чеков</label>
+            <select id="cheques">
+              <option value="1">1 cheque</option>
+              <option value="2" selected>2 cheques</option>
+              <option value="4">4 cheques</option>
+              <option value="6">6 cheques</option>
+              <option value="12">12 cheques</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="propertyType">Тип жилья</label>
+            <select id="propertyType">
+              <option value="flat" selected>Apartment / Flat</option>
+              <option value="villa">Villa</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="two">
+          <div class="field">
+            <label for="depositPct">Security deposit landlord</label>
+            <select id="depositPct">
+              <option value="5" selected>5% — unfurnished</option>
+              <option value="10">10% — furnished</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="agencyPct">Комиссия агенту</label>
+            <select id="agencyPct">
+              <option value="5" selected>5%</option>
+              <option value="10">10%</option>
+            </select>
+            <div class="hint">VAT 5% на комиссию считается автоматически.</div>
+          </div>
+        </div>
+
+        <div class="section-title">Официальные / фиксированные платежи</div>
+
+        <div class="two">
+          <div class="field">
+            <label for="ejariMethod">Ejari</label>
+            <select id="ejariMethod">
+              <option value="online" selected>Dubai REST / DLD website — AED 177.75</option>
+              <option value="trustee">Trustee Centre — AED 220</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="dewaMeter">DEWA activation</label>
+            <select id="dewaMeter">
+              <option value="small" selected>Small meter — AED 155</option>
+              <option value="large">Large meter — AED 330</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section-title">Месячные расходы</div>
+
+        <div class="field">
+          <label for="usageProfile">DEWA electricity & water</label>
+          <select id="usageProfile">
+            <option value="low">Экономно</option>
+            <option value="normal" selected>Стандартно</option>
+            <option value="high">Высокое потребление</option>
+          </select>
+          <div class="hint">Оценка электричества и воды без housing fee. Housing fee считается отдельно как 5% от годовой аренды.</div>
+        </div>
+
+        <div class="field">
+          <label for="chillerMode">Chiller / district cooling</label>
+          <select id="chillerMode">
+            <option value="none" selected>Нет отдельного chiller / включён в DEWA или rent — AED 0</option>
+            <option value="low">Есть отдельный chiller — низкая оценка</option>
+            <option value="normal">Есть отдельный chiller — стандартная оценка</option>
+            <option value="high">Есть отдельный chiller — высокая оценка</option>
+          </select>
+          <div class="hint">Если в здании есть отдельный district cooling, сумма считается автоматически от площади.</div>
+        </div>
+
+        <div class="field">
+          <label for="internetPlan">Интернет</label>
+          <select id="internetPlan">
+            <option value="none">Не нужен / уже включён — AED 0</option>
+            <option value="budget" selected>Бюджетный home internet — AED 250 + VAT / мес</option>
+            <option value="standard">Стандартный fiber/wireless — AED 429 + VAT / мес</option>
+            <option value="premium">Premium internet / TV bundle — AED 799 + VAT / мес</option>
+          </select>
+          <div class="hint">VAT 5% считается автоматически. Точная цена зависит от провайдера, адреса и акции.</div>
+        </div>
+
+      </aside>
+
+      <section>
+        <div class="result-grid">
+          <div class="metric main">
+            <div class="name">Нужно upfront</div>
+            <div class="num" id="upfront">—</div>
+            <div class="sub">первый чек + депозиты + fees</div>
+          </div>
+          <div class="metric">
+            <div class="name">Месячно после въезда</div>
+            <div class="num" id="monthlyRecurring">—</div>
+            <div class="sub">rent/month + DEWA + chiller + internet</div>
+          </div>
+          <div class="metric">
+            <div class="name">Год 1 всего</div>
+            <div class="num" id="yearOne">—</div>
+            <div class="sub">с возвратными депозитами</div>
+          </div>
+          <div class="metric">
+            <div class="name">Среднее / мес в год 1</div>
+            <div class="num" id="avgMonthly">—</div>
+            <div class="sub">год 1 / 12</div>
+          </div>
+        </div>
+
+        <div class="split">
+          <div class="card table-card">
+            <table>
+              <thead><tr><th>Первый платёж / upfront</th><th style="text-align:right">AED</th></tr></thead>
+              <tbody id="upfrontRows"></tbody>
+            </table>
+          </div>
+          <div class="card table-card">
+            <table>
+              <thead><tr><th>Подробные месячные расходы</th><th style="text-align:right">AED / мес</th></tr></thead>
+              <tbody id="monthlyRows"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card table-card">
+          <table>
+            <thead><tr><th>Годовой бюджет</th><th style="text-align:right">AED / год</th></tr></thead>
+            <tbody id="annualRows"></tbody>
+          </table>
+        </div>
+
+        <div class="card panel">
+          <h2>Что именно считается</h2>
+          <div class="source">
+            <div><span class="badge">Rent</span> Monthly rent = Annual rent ÷ 12. Cheque amount = Annual rent ÷ number of cheques.</div>
+            <div><span class="badge">Landlord deposit</span> 5% для unfurnished или 10% для furnished.</div>
+            <div><span class="badge">Agency</span> Только 5% или 10%, плюс VAT 5% на комиссию.</div>
+            <div><span class="badge">Ejari</span> Online/Dubai REST — AED 177.75, Trustee Centre — AED 220.</div>
+            <div><span class="badge">DEWA</span> Deposit: AED 2,000 flat / AED 4,000 villa. Activation: AED 155 small meter / AED 330 large meter.</div>
+            <div><span class="badge">Housing fee</span> 5% от годовой аренды, распределяется на 12 месяцев и обычно приходит в DEWA bill.</div>
+            <div><span class="badge">Chiller</span> Если отдельного chiller нет — AED 0. Если есть — оценка считается от площади.</div>
+            <div><span class="badge">Internet</span> Добавлен отдельной строкой с VAT 5%.</div>
+          </div>
+          <div class="note">
+            Убраны поля “Переезд AED”, “Другое upfront” и “Прочие bills”, потому что они были слишком размытыми.
+            Теперь все расходы разложены по понятным категориям. Перевозка мебели/личных вещей не включена в обязательный rental budget, потому что это не платёж landlord/DEWA/Ejari.
+          </div>
+        </div>
+      </section>
+    </main>
+    <div class="footer">Одностраничный офлайн-калькулятор. Можно открыть в браузере, сохранить как PDF или экспортировать расчёт в CSV.</div>
+  </div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const money = (n) => "AED " + Math.round(Number(n || 0)).toLocaleString("en-AE");
+const money2 = (n) => "AED " + Number(n || 0).toLocaleString("en-AE", {maximumFractionDigits:2});
+const num = (id) => Number($(id).value || 0);
+
+const EJARI_FEES = { online: 177.75, trustee: 220 };
+const DEWA_ACTIVATION = { small: 155, large: 330 };
+const INTERNET_PLANS = {
+  none: {base: 0, vatPct: 0, upfront: 0},
+  budget: {base: 250, vatPct: 5, upfront: 0},
+  standard: {base: 429, vatPct: 5, upfront: 0},
+  premium: {base: 799, vatPct: 5, upfront: 0}
+};
+const CHILLER_RATES_YEARLY_PER_SQFT = {
+  none: 0,
+  low: 10,
+  normal: 15,
+  high: 22
+};
+
+function getDewaUsageEstimateMonthly(propertyType, sqft, profile, hasSeparateChiller){
+  const flatRates = {low:0.55, normal:0.80, high:1.15};
+  const villaRates = {low:1.10, normal:1.60, high:2.40};
+  const minimums = propertyType === "villa"
+    ? {low:1200, normal:1800, high:2500}
+    : {low:350, normal:500, high:700};
+
+  const rates = propertyType === "villa" ? villaRates : flatRates;
+  let estimate = Number(sqft || 0) * rates[profile];
+
+  if(hasSeparateChiller){
+    estimate = estimate * 0.75;
+  }
+
+  return Math.max(estimate, minimums[profile]);
+}
+
+function calculateFor(values){
+  const rent = Number(values.rent || 0);
+  const sqft = Number(values.sqft || 0);
+  const cheques = Number(values.cheques || 1);
+  const propertyType = values.propertyType || "flat";
+  const chillerMode = values.chillerMode || "none";
+  const hasSeparateChiller = chillerMode !== "none";
+  const internetPlan = INTERNET_PLANS[values.internetPlan] || INTERNET_PLANS.none;
+
+  const monthlyRent = rent / 12;
+  const chequeAmount = rent / Math.max(cheques, 1);
+
+  const landlordDeposit = rent * Number(values.depositPct || 0) / 100;
+  const agency = rent * Number(values.agencyPct || 0) / 100;
+  const agencyVat = agency * 0.05;
+
+  const ejari = EJARI_FEES[values.ejariMethod] || EJARI_FEES.online;
+  const dewaDeposit = propertyType === "villa" ? 4000 : 2000;
+  const dewaActivation = DEWA_ACTIVATION[values.dewaMeter] || DEWA_ACTIVATION.small;
+
+  const housingMonthly = rent * 0.05 / 12;
+  const dewaUsageMonthly = getDewaUsageEstimateMonthly(propertyType, sqft, values.usageProfile || "normal", hasSeparateChiller);
+  const chillerMonthly = sqft * (CHILLER_RATES_YEARLY_PER_SQFT[chillerMode] || 0) / 12;
+  const internetVatMonthly = internetPlan.base * internetPlan.vatPct / 100;
+  const internetMonthly = internetPlan.base + internetVatMonthly;
+  const internetUpfront = internetPlan.upfront || 0;
+
+  const upfront = chequeAmount + landlordDeposit + agency + agencyVat + ejari + dewaDeposit + dewaActivation + internetUpfront;
+  const monthlyRecurring = monthlyRent + housingMonthly + dewaUsageMonthly + chillerMonthly + internetMonthly;
+  const monthlyUtilities = housingMonthly + dewaUsageMonthly + chillerMonthly + internetMonthly;
+
+  const annualUtilities = monthlyUtilities * 12;
+  const oneOffFees = agency + agencyVat + ejari + dewaActivation + internetUpfront;
+  const refundableDeposits = landlordDeposit + dewaDeposit;
+  const yearOne = rent + annualUtilities + oneOffFees + refundableDeposits;
+  const yearOneWithoutRefundableDeposits = yearOne - refundableDeposits;
+  const psf = sqft > 0 ? rent / sqft : 0;
+
+  return {
+    rent, sqft, cheques, monthlyRent, chequeAmount, landlordDeposit, agency, agencyVat, ejari,
+    dewaDeposit, dewaActivation, housingMonthly, dewaUsageMonthly, chillerMonthly, internetMonthly,
+    internetVatMonthly, internetUpfront, upfront, monthlyRecurring, monthlyUtilities, annualUtilities,
+    oneOffFees, refundableDeposits, yearOne, yearOneWithoutRefundableDeposits, avgMonthly: yearOne / 12, psf
+  };
+}
+
+function currentValues(){
+  return {
+    rent: num("rent"),
+    sqft: num("sqft"),
+    cheques: num("cheques"),
+    propertyType: $("propertyType").value,
+    depositPct: num("depositPct"),
+    agencyPct: num("agencyPct"),
+    ejariMethod: $("ejariMethod").value,
+    dewaMeter: $("dewaMeter").value,
+    usageProfile: $("usageProfile").value,
+    chillerMode: $("chillerMode").value,
+    internetPlan: $("internetPlan").value
+  };
+}
+
+function row(name, val, note="", total=false){
+  return `<tr class="${total ? "total" : ""}"><td>${name}${note ? `<div class="hint">${note}</div>` : ""}</td><td class="amount">${money2(val)}</td></tr>`;
+}
+
+function calculate(){
+  const r = calculateFor(currentValues());
+
+  $("upfront").textContent = money(r.upfront);
+  $("monthlyRecurring").textContent = money(r.monthlyRecurring);
+  $("yearOne").textContent = money(r.yearOne);
+  $("avgMonthly").textContent = money(r.avgMonthly);
+
+  $("upfrontRows").innerHTML = [
+    row("Первый rental cheque", r.chequeAmount, `${r.cheques} cheque(s): ${money(r.rent)} ÷ ${r.cheques}`),
+    row("Security deposit landlord", r.landlordDeposit, "Возвратный депозит landlord"),
+    row("Agency commission", r.agency),
+    row("VAT 5% на agency commission", r.agencyVat),
+    row("Ejari", r.ejari),
+    row("DEWA security deposit", r.dewaDeposit, "Возвратный депозит DEWA"),
+    row("DEWA activation", r.dewaActivation),
+    row("Internet setup / router", r.internetUpfront, "Если выбранный пакет не требует upfront — AED 0"),
+    row("Итого cash upfront", r.upfront, "", true)
+  ].join("");
+
+  $("monthlyRows").innerHTML = [
+    row("Rent equivalent", r.monthlyRent, "Годовая аренда ÷ 12"),
+    row("Housing fee", r.housingMonthly, "5% от годовой аренды ÷ 12"),
+    row("DEWA electricity & water", r.dewaUsageMonthly, "Оценка потребления электричества и воды без housing fee"),
+    row("Chiller / district cooling", r.chillerMonthly, "AED 0, если отдельного chiller нет"),
+    row("Internet", r.internetMonthly, `Включая VAT: ${money2(r.internetVatMonthly)} / мес`),
+    row("Итого месячно после въезда", r.monthlyRecurring, "Средняя регулярная нагрузка в месяц", true),
+    row("Из них utilities + internet", r.monthlyUtilities, "Без rent equivalent")
+  ].join("");
+
+  $("annualRows").innerHTML = [
+    row("Annual rent", r.rent),
+    row("Housing fee за год", r.housingMonthly * 12),
+    row("DEWA electricity & water за год", r.dewaUsageMonthly * 12),
+    row("Chiller / district cooling за год", r.chillerMonthly * 12),
+    row("Internet за год", r.internetMonthly * 12),
+    row("One-off fees", r.oneOffFees, "Agency + VAT + Ejari + DEWA activation + internet setup"),
+    row("Возвратные депозиты", r.refundableDeposits, "Landlord deposit + DEWA deposit"),
+    row("Год 1 всего", r.yearOne, "С возвратными депозитами", true),
+    row("Год 1 без возвратных депозитов", r.yearOneWithoutRefundableDeposits, "Более реалистичная стоимость, если депозиты вернут")
+  ].join("");
+}
+
+function exportCsv(){
+  const r = calculateFor(currentValues());
+  const rows = [
+    ["Metric","AED"],
+    ["Annual rent", r.rent],
+    ["Monthly rent equivalent", r.monthlyRent],
+    ["Cheque amount", r.chequeAmount],
+    ["Landlord security deposit", r.landlordDeposit],
+    ["Agency commission", r.agency],
+    ["VAT on agency commission", r.agencyVat],
+    ["Ejari", r.ejari],
+    ["DEWA security deposit", r.dewaDeposit],
+    ["DEWA activation", r.dewaActivation],
+    ["Housing fee monthly", r.housingMonthly],
+    ["DEWA electricity and water monthly", r.dewaUsageMonthly],
+    ["Chiller monthly", r.chillerMonthly],
+    ["Internet monthly", r.internetMonthly],
+    ["Monthly recurring total", r.monthlyRecurring],
+    ["Upfront cash needed", r.upfront],
+    ["Year 1 total with deposits", r.yearOne],
+    ["Year 1 total without refundable deposits", r.yearOneWithoutRefundableDeposits],
+    ["Rent per sq.ft", r.psf]
+  ];
+  const csv = rows.map(row => row.map(v => `"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "dubai-rent-calculation.csv";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function resetDefaults(){
+  $("rent").value = 90000;
+  $("sqft").value = 750;
+  $("cheques").value = 2;
+  $("propertyType").value = "flat";
+  $("depositPct").value = 5;
+  $("agencyPct").value = 5;
+  $("ejariMethod").value = "online";
+  $("dewaMeter").value = "small";
+  $("usageProfile").value = "normal";
+  $("chillerMode").value = "none";
+  $("internetPlan").value = "budget";
+  calculate();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("input,select").forEach(el => {
+    el.addEventListener("input", calculate);
+    el.addEventListener("change", calculate);
+  });
+  $("printBtn").addEventListener("click", () => window.print());
+  $("csvBtn").addEventListener("click", exportCsv);
+  $("resetBtn").addEventListener("click", resetDefaults);
+  calculate();
+});
+</script>
+</body>
+</html>
